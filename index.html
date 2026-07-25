@@ -27,7 +27,12 @@ html { scroll-behavior: smooth; }
 
 body {
   font-family: 'League Spartan', sans-serif;
-  background: var(--bg);
+  background:
+    linear-gradient(rgba(249,246,243,0.55), rgba(249,246,243,0.65)),
+    url('assets/eglise.jpg');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
   color: var(--text);
   overflow-x: hidden;
   line-height: 1.5;
@@ -521,7 +526,7 @@ section { position: relative; }
 
 /* ============ FOOTER ============ */
 footer {
-  background: var(--bg-alt);
+  background: rgba(242,237,232,0.45);
   border-top: 1px solid var(--border);
   padding: 60px 0 0;
   margin-top: 40px;
@@ -1018,7 +1023,7 @@ footer {
   <div class="wave-wrap"><canvas id="wave1"></canvas></div>
 
   <!-- ===== FILIÈRES PHARES ===== -->
-  <section class="section-pad" style="background:var(--bg-alt);">
+  <section class="section-pad" style="background:rgba(242,237,232,0.45);">
     <div class="container">
       <div class="center" style="margin-bottom:46px;">
         <div class="section-tag"><i data-lucide="graduation-cap"></i> Nos filières</div>
@@ -1100,7 +1105,7 @@ footer {
   <div class="wave-wrap"><canvas id="wave3"></canvas></div>
 
   <!-- ===== INFOS DISPO ===== -->
-  <section class="section-pad" style="background:var(--bg-alt);">
+  <section class="section-pad" style="background:rgba(242,237,232,0.45);">
     <div class="container">
       <div class="dispo-box glass glass-glow reveal">
         <div class="dispo-left">
@@ -1143,7 +1148,7 @@ footer {
   </section>
 
   <!-- ===== CTA FINALE ===== -->
-  <section class="section-pad" style="background:var(--bg-alt);">
+  <section class="section-pad" style="background:rgba(242,237,232,0.45);">
     <div class="container">
       <div class="cta-box glass glass-glow reveal">
         <h2>Rejoins le Campus <span>Kiwi</span>.</h2>
@@ -1864,13 +1869,20 @@ function initWave(canvas, opts = {}) {
     ctx.clearRect(0, 0, w, h);
     ribbons.forEach(r => {
       ctx.beginPath();
-      ctx.moveTo(0, h);
+      // Bord du haut : va de gauche à droite
       for (let x = 0; x <= w; x += 4) {
         const y = h / 2 + Math.sin(x * r.freq + t * r.speed * 10 + r.offset) * r.amp
                   + Math.sin(x * r.freq * 0.5 + t * r.speed * 6) * (r.amp * 0.4);
+        if (x === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+      }
+      // Bord du bas : revient de droite à gauche, décalé en phase et amplitude
+      // pour donner de l'épaisseur ondulante au ruban (plus de base plate)
+      for (let x = w; x >= 0; x -= 4) {
+        const y = h / 2 + r.amp * 1.6
+                  + Math.sin(x * r.freq + t * r.speed * 10 + r.offset + Math.PI * 0.35) * (r.amp * 0.7)
+                  + Math.sin(x * r.freq * 0.5 + t * r.speed * 6 + 1.2) * (r.amp * 0.3);
         ctx.lineTo(x, y);
       }
-      ctx.lineTo(w, h);
       ctx.closePath();
       ctx.fillStyle = bordeauxColor + ' ' + r.alpha + ')';
       ctx.fill();
